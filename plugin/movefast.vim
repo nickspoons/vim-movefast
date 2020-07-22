@@ -1,3 +1,6 @@
+if exists('g:movefast_loaded') | finish | endif
+let g:movefast_loaded = 1
+
 nnoremap <silent> <Plug>(movefast_buffer_prev) :call movefast#buffer#Prev(0)<CR>
 nnoremap <silent> <Plug>(movefast_buffer_next) :call movefast#buffer#Next(0)<CR>
 nnoremap <silent> <Plug>(movefast_buffer_prev_global) :call movefast#buffer#Prev(1)<CR>
@@ -16,3 +19,4 @@ augroup MoveFast
   autocmd BufWinEnter * call movefast#buffer#AddToHistory()
 augroup END
 
+" vim:et:sw=2:sts=2

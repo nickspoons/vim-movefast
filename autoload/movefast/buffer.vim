@@ -1,3 +1,6 @@
+let s:save_cpo = &cpoptions
+set cpoptions&vim
+
 scriptencoding utf-8
 
 let g:movefast_buffer_history = get(g:, 'movefast_buffer_history', [])
@@ -65,3 +68,8 @@ endfunction
 function! movefast#buffer#Next(global) abort
   call s:FastBufferInit(a:global, get(g:, 'movefast_buffer_next', 'l'))
 endfunction
+
+let &cpoptions = s:save_cpo
+unlet s:save_cpo
+
+" vim:et:sw=2:sts=2

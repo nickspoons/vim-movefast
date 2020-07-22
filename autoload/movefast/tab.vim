@@ -1,3 +1,6 @@
+let s:save_cpo = &cpoptions
+set cpoptions&vim
+
 scriptencoding utf-8
 
 function s:FastTab(direction) abort
@@ -26,3 +29,8 @@ endfunction
 function! movefast#tab#Next() abort
   call s:FastTabInit(get(g:, 'movefast_tab_next', 'l'))
 endfunction
+
+let &cpoptions = s:save_cpo
+unlet s:save_cpo
+
+" vim:et:sw=2:sts=2

@@ -1,3 +1,6 @@
+let s:save_cpo = &cpoptions
+set cpoptions&vim
+
 function! movefast#Next(direction, opts) abort
   call a:opts.next(a:direction)
   let directions = get(a:opts, 'directions', ['h', 'l'])
@@ -15,3 +18,8 @@ function! movefast#Next(direction, opts) abort
     redraw
   endif
 endfunction
+
+let &cpoptions = s:save_cpo
+unlet s:save_cpo
+
+" vim:et:sw=2:sts=2
