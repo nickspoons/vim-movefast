@@ -5,7 +5,7 @@ scriptencoding utf-8
 
 let g:movefast_buffer_history = get(g:, 'movefast_buffer_history', [])
 
-function! movefast#buffer#AddToHistory() abort
+function! movefast#movement#buffer#AddToHistory() abort
   if get(s:, 'buffer_navigating', 0) | return | endif
   let w:movefast_buffer_history = get(w:, 'movefast_buffer_history', [])
   let bufnr = bufnr('%')
@@ -21,9 +21,9 @@ endfunction
 function! s:FastBuffer(scope, direction) abort
   let buffers = get(a:scope, 'movefast_buffer_history', [])
   let idx = index(buffers, bufnr('%'))
-  if a:direction ==# get(g:, 'movefast_buffer_prev', 'h')
+  if a:direction ==# s:options.directions[0]
     let idx = idx == 0 ? 0 : idx - 1
-  elseif a:direction ==# get(g:, 'movefast_buffer_next', 'l')
+  elseif a:direction ==# s:options.directions[1]
     let idx = idx == len(buffers) - 1 ? len(buffers) - 1 : idx + 1
   endif
   let s:buffer_navigating = 1
@@ -34,11 +34,12 @@ endfunction
 function! s:FastBufferComplete() abort
   let s:buffer_navigating = 0
   " Move the newly selected buffer to the top of the list
-  call movefast#buffer#AddToHistory()
+  call movefast#movement#buffer#AddToHistory()
   if len(w:movefast_buffer_history) > 1
     " Set the previous top of the list as the alternate buffer
     let @# = w:movefast_buffer_history[-2]
   endif
+  call movefast#utils#Execute(s:user, 'oncomplete')
 endfunction
 
 function! s:FastBufferInit(global, direction) abort
@@ -51,22 +52,30 @@ function! s:FastBufferInit(global, direction) abort
   endfor
   let scope = a:global ? g: : w:
   if len(get(scope, 'movefast_buffer_history', [])) < 2 | return | endif
-  call movefast#Next(a:direction, {
-  \ 'directions': [
-  \   get(g:, 'movefast_buffer_prev', 'h'),
-  \   get(g:, 'movefast_buffer_next', 'l')
-  \ ],
+  let s:options = {
+  \ 'directions': ['h', 'l'],
   \ 'title': (a:global ? 'Global ' : '') . 'FastBuffering…',
-  \ 'next': function('s:FastBuffer', [scope]),
-  \ 'complete': function('s:FastBufferComplete')
-  \})
+  \ 'next': function('s:FastBuffer', [scope])
+  \}
+  let s:user = {}
+  if has_key(get(g:, 'movefast_buffer', {}), 'oncomplete')
+    " Back up user-defined 'oncomplete' action, to be executed after
+    " s:FastBufferComplete()
+    let s:user.oncomplete = g:movefast_buffer.oncomplete
+  endif
+  call extend(s:options, get(g:, 'movefast_buffer', {}))
+  let s:options.oncomplete = function('s:FastBufferComplete')
+  let direction = type(a:direction) == v:t_number
+  \ ? s:options.directions[a:direction]
+  \ : a:direction
+  call movefast#Init(direction, s:options)
 endfunction
 
-function! movefast#buffer#Prev(global) abort
-  call s:FastBufferInit(a:global, get(g:, 'movefast_buffer_prev', 'h'))
+function! movefast#movement#buffer#Prev(global) abort
+  call s:FastBufferInit(a:global, 0)
 endfunction
-function! movefast#buffer#Next(global) abort
-  call s:FastBufferInit(a:global, get(g:, 'movefast_buffer_next', 'l'))
+function! movefast#movement#buffer#Next(global) abort
+  call s:FastBufferInit(a:global, 1)
 endfunction
 
 let &cpoptions = s:save_cpo

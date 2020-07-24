@@ -1,21 +1,26 @@
 let s:save_cpo = &cpoptions
 set cpoptions&vim
 
-function! movefast#Next(direction, opts) abort
-  call a:opts.next(a:direction)
-  let directions = get(a:opts, 'directions', ['h', 'l'])
-  if has_key(a:opts, 'title')
-    echohl Identifier | echo a:opts.title | echohl None
+function! movefast#Init(direction, options) abort
+  call movefast#utils#Execute(a:options, 'oninit')
+  call movefast#Next(a:direction, a:options)
+endfunction
+
+function! movefast#Next(direction, options) abort
+  call a:options.next(a:direction)
+  call movefast#utils#Execute(a:options, 'onnext')
+  if has_key(a:options, 'title')
+    echohl Identifier | echo a:options.title | echohl None
   endif
-  let c = nr2char(getchar())
-  if index(directions, c) >= 0
-    call movefast#Next(c, a:opts)
+  let directions = get(a:options, 'directions', ['h', 'l'])
+  let c = getchar()
+  let char = type(c) == v:t_number ? nr2char(c) : c
+  if index(get(a:options, 'directions', ['h', 'l']), char) >= 0
+    call movefast#Next(char, a:options)
   else
     echo ''
-    if has_key(a:opts, 'complete')
-      call a:opts.complete()
-    endif
     redraw
+    call movefast#utils#Execute(a:options, 'oncomplete')
   endif
 endfunction
 
