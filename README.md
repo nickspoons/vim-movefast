@@ -1,7 +1,17 @@
 # Move Fast
 
-This plugin provides an extensible way of navigating in a repetitive fashion using single keys.
-The idea is to be able to enter navigation "modes" where convenient keys such as `h` and `l` can be used without remapping these keys in normal usage.
+Use convenient, single-key presses to perform repetitive navigation - without remapping.
+
+Enter movefast "mode", then use e.g. `h` and `l` to move - whether you are scrolling a buffer, navigating the buffer list, browsing a diff, stepping through quickfix entries or anything else that involves repetitive commands.
+The plugin contains some built-in movements but is entirely extensible - build the movefast movements you need!
+
+## Contents
+
+- [Anatomy of a movement](#anatomy-of-a-movement)
+- [Movement options](#movement-options)
+- [Built-in movements](#built-in-movements)
+    - [Buffer history](#buffer-history)
+    - [Built-in movement configuration](#built-in-movement-configuration)
 
 ## Anatomy of a movement
 
@@ -69,7 +79,7 @@ Additionally, a global buffer history list is maintained, allowing navigation th
 
 Only "normal" buffers and help buffers are included in the history - not special buffers such as quickfix buffers.
 
-### Build-in movement configuration
+### Built-in movement configuration
 
 No mappings are provided automatically.
 Add mappings in your .vimrc to add the movefast movements you are interested in:
