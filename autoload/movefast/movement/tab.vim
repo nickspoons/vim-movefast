@@ -12,16 +12,14 @@ function s:FastTab(direction) abort
   redraw
 endfunction
 
-function! s:FastTabInit(direction) abort
+function! s:FastTabInit(directionIndex) abort
   let s:options = {
   \ 'directions': ['h', 'l'],
   \ 'title': 'FastTabbing…',
   \ 'next': function('s:FastTab')
   \}
   call extend(s:options, get(g:, 'movefast_tab', {}))
-  let direction = type(a:direction) == v:t_number
-  \ ? s:options.directions[a:direction]
-  \ : a:direction
+  let direction = s:options.directions[a:directionIndex]
   call movefast#Init(direction, s:options)
 endfunction
 

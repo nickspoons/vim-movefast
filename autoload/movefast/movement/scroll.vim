@@ -21,29 +21,25 @@ function s:FastScrollHorizontal(direction) abort
   redraw
 endfunction
 
-function! s:FastScrollInit(direction) abort
+function! s:FastScrollInit(directionIndex) abort
   let s:options = {
   \ 'directions': ['j', 'k'],
   \ 'title': 'FastScrolling…',
   \ 'next': function('s:FastScroll')
   \}
   call extend(s:options, get(g:, 'movefast_scroll', {}))
-  let direction = type(a:direction) == v:t_number
-  \ ? s:options.directions[a:direction]
-  \ : a:direction
+  let direction = s:options.directions[a:directionIndex]
   call movefast#Init(direction, s:options)
 endfunction
 
-function! s:FastScrollInitHorizontal(direction) abort
+function! s:FastScrollInitHorizontal(directionIndex) abort
   let s:options = {
   \ 'directions': ['h', 'l'],
   \ 'title': 'FastScrolling…',
   \ 'next': function('s:FastScrollHorizontal')
   \}
   call extend(s:options, get(g:, 'movefast_scroll_horizontal', {}))
-  let direction = type(a:direction) == v:t_number
-  \ ? s:options.directions[a:direction]
-  \ : a:direction
+  let direction = s:options.directions[a:directionIndex]
   call movefast#Init(direction, s:options)
 endfunction
 

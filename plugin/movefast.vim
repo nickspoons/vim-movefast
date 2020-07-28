@@ -2,9 +2,7 @@ if exists('g:movefast_loaded') | finish | endif
 let g:movefast_loaded = 1
 
 nnoremap <silent> <Plug>(movefast_buffer_prev) :call movefast#movement#buffer#Prev(0)<CR>
-nnoremap <silent> <Plug>(movefast_buffer_next) :call movefast#movement#buffer#Next(0)<CR>
-nnoremap <silent> <Plug>(movefast_buffer_prev_global) :call movefast#movement#buffer#Prev(1)<CR>
-nnoremap <silent> <Plug>(movefast_buffer_next_global) :call movefast#movement#buffer#Next(1)<CR>
+nnoremap <silent> <Plug>(movefast_buffer_global_prev) :call movefast#movement#buffer#Prev(1)<CR>
 
 nnoremap <silent> <Plug>(movefast_scroll_down) :call movefast#movement#scroll#Down()<CR>
 nnoremap <silent> <Plug>(movefast_scroll_up) :call movefast#movement#scroll#Up()<CR>

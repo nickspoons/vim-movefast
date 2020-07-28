@@ -42,7 +42,7 @@ function! s:FastBufferComplete() abort
   call movefast#utils#Execute(s:user, 'oncomplete')
 endfunction
 
-function! s:FastBufferInit(global, direction) abort
+function! s:FastBufferInit(global) abort
   " Legal buftypes for fast-buffer switching
   let bts = ['', 'help']
   " Filter movefast_buffer_history in both scopes - do not use copy() here
@@ -52,30 +52,31 @@ function! s:FastBufferInit(global, direction) abort
   endfor
   let scope = a:global ? g: : w:
   if len(get(scope, 'movefast_buffer_history', [])) < 2 | return | endif
+  if a:global
+    " Ensure that current buffer is at the top of the global history stack
+    " before beginning
+    call movefast#movement#buffer#AddToHistory()
+  endif
   let s:options = {
   \ 'directions': ['h', 'l'],
   \ 'title': (a:global ? 'Global ' : '') . 'FastBuffering…',
   \ 'next': function('s:FastBuffer', [scope])
   \}
   let s:user = {}
-  if has_key(get(g:, 'movefast_buffer', {}), 'oncomplete')
+  let optionsName = a:global ? 'movefast_buffer_global' : 'movefast_buffer'
+  if has_key(get(g:, optionsName, {}), 'oncomplete')
     " Back up user-defined 'oncomplete' action, to be executed after
     " s:FastBufferComplete()
-    let s:user.oncomplete = g:movefast_buffer.oncomplete
+    let s:user.oncomplete = get(g:, optionsName).oncomplete
   endif
-  call extend(s:options, get(g:, 'movefast_buffer', {}))
+  call extend(s:options, get(g:, optionsName, {}))
   let s:options.oncomplete = function('s:FastBufferComplete')
-  let direction = type(a:direction) == v:t_number
-  \ ? s:options.directions[a:direction]
-  \ : a:direction
+  let direction = s:options.directions[0]
   call movefast#Init(direction, s:options)
 endfunction
 
 function! movefast#movement#buffer#Prev(global) abort
-  call s:FastBufferInit(a:global, 0)
-endfunction
-function! movefast#movement#buffer#Next(global) abort
-  call s:FastBufferInit(a:global, 1)
+  call s:FastBufferInit(a:global)
 endfunction
 
 let &cpoptions = s:save_cpo

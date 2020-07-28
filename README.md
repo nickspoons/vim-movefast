@@ -67,7 +67,7 @@ Some movements are included in the plugin:
 
 - Scroll: vertical (`<C-d>`/`<C-u>`) and horizontal (`zH`/`zL`) scrolling
 - Tab: move through tabs with `gt` and `gT`
-- Buffer: move through window-specific or global buffer history
+- Buffer: move through window-local or global buffer history
 
 ### Buffer history
 
@@ -76,8 +76,10 @@ The plugin maintains window-local buffer lists, allowing navigation back and for
 On movement completion, the final buffer is moved to the top of the history list, and the buffer which initialised the movement becomes the "alternate" buffer (allowing [:h CTRL-^](http://vimhelp.appspot.com/editing.txt.html#CTRL-%5E) navigation).
 
 Additionally, a global buffer history list is maintained, allowing navigation through _all_ normal buffers, in order of last access.
-
 Only "normal" buffers and help buffers are included in the history - not special buffers such as quickfix buffers.
+
+Note that the buffer movement always starts from the top of the history, so there are no `<Plug>(movefast_buffer_next)`/`<Plug>(movefast_buffer_global_next)` maps.
+It only makes sense to begin navigating _back_ through the history.
 
 ### Built-in movement configuration
 
@@ -87,9 +89,7 @@ Add mappings in your .vimrc to add the movefast movements you are interested in:
 ```vim
 " Default directions: 'h'/'l'
 nmap <Space>bh <Plug>(movefast_buffer_prev)
-nmap <Space>bl <Plug>(movefast_buffer_next)
-nmap <Space>bH <Plug>(movefast_buffer_prev_global)
-nmap <Space>bL <Plug>(movefast_buffer_next_global)
+nmap <Space>Bh <Plug>(movefast_buffer_global_prev)
 
 " Default directions: 'j'/'k'
 nmap <Space>j <Plug>(movefast_scroll_down)
@@ -107,18 +107,21 @@ nmap <Space>tl <Plug>(movefast_tab_next)
 These mappings work well with the default movefast `directions` for the built-in movements.
 The options (see [Movement options](#movement-options) above) for these movements can be overridden using the following variables:
 
-| Movement          | Options variable               | Default `directions` |
-|-------------------|--------------------------------|----------------------|
-| Buffer history    | `g:movefast_buffer`            | `['h', 'l']`         |
-| Vertical scroll   | `g:movefast_scroll`            | `['j', 'k']`         |
-| Horizontal scroll | `g:movefast_scroll_horizontal` | `['h', 'l']`         |
-| Tab navigation    | `g:movefast_tab`               | `['h', 'l']`         |
+| Movement                | Options variable               | Default `directions` |
+|-------------------------|--------------------------------|----------------------|
+| Buffer history (window) | `g:movefast_buffer`            | `['h', 'l']`         |
+| Buffer history (global) | `g:movefast_buffer_global`     | `['h', 'l']`         |
+| Vertical scroll         | `g:movefast_scroll`            | `['j', 'k']`         |
+| Horizontal scroll       | `g:movefast_scroll_horizontal` | `['h', 'l']`         |
+| Tab navigation          | `g:movefast_tab`               | `['h', 'l']`         |
 
 Here are some customization examples:
 
 ```vim
-" Use 'j' and 'k' for buffer history navigation
+" Use 'j' and 'k' for window-local buffer history navigation
 let g:movefast_buffer = { 'directions': ['j', 'k'] }
+" Use 'J' and 'K' for global buffer history navigation
+let g:movefast_buffer_global = { 'directions': ['J', 'K'] }
 
 " Use arrow keys and custom titles for scrolling, and update vim-lightline
 " statusline after each movement
@@ -133,9 +136,8 @@ let g:movefast_scroll_horizontal = {
 \ 'onnext': function('lightline#update')
 \}
 
-" Initialize buffer history navigation with `oi`/`io`, and use `i`/`o` to
+" Initialize buffer history navigation with `oi`, and use `i`/`o` to
 " continue
 nmap oi <Plug>(movefast_buffer_prev)
-nmap io <Plug>(movefast_buffer_next)
 let g:movefast_buffer = { 'directions': ['i', 'o'] }
 ```
