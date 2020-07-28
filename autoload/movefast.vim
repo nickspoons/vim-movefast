@@ -7,7 +7,11 @@ function! movefast#Init(direction, options) abort
 endfunction
 
 function! movefast#Next(direction, options) abort
-  call a:options.next(a:direction)
+  if type(a:options.next) == v:t_func
+    call a:options.next(a:direction)
+  else
+    call function(a:options.next)(a:direction)
+  endif
   call movefast#utils#Execute(a:options, 'onnext')
   if has_key(a:options, 'title')
     echohl Identifier | echo a:options.title | echohl None
