@@ -72,14 +72,16 @@ Some movements are included in the plugin:
 ### Buffer history
 
 The "scroll" and "tab" movements are simple movefast movements, but the buffer movement is more complicated.
-The plugin maintains window-local buffer lists, allowing navigation back and forth through the window history.
-On movement completion, the final buffer is moved to the top of the history list, and the buffer which initialised the movement becomes the "alternate" buffer (allowing [:h CTRL-^](http://vimhelp.appspot.com/editing.txt.html#CTRL-%5E) navigation).
+The plugin maintains window-local buffer stacks, allowing navigation back and forth through the window history.
+On movement completion, the final buffer is moved to the top of the history stack, and the buffer which initialised the movement becomes the "alternate" buffer (allowing [:h CTRL-^](http://vimhelp.appspot.com/editing.txt.html#CTRL-%5E) navigation).
 
-Additionally, a global buffer history list is maintained, allowing navigation through _all_ normal buffers, in order of last access.
+Additionally, a global buffer history stack is maintained, allowing navigation through _all_ normal buffers, in order of last access.
 Only "normal" buffers and help buffers are included in the history - not special buffers such as quickfix buffers.
 
-Note that the buffer movement always starts from the top of the history, so there are no `<Plug>(movefast_buffer_next)`/`<Plug>(movefast_buffer_global_next)` maps.
+Note that the buffer movement always starts from the top of the history stack, so there are no `<Plug>(movefast_buffer_next)`/`<Plug>(movefast_buffer_global_next)` maps.
 It only makes sense to begin navigating _back_ through the history.
+
+Should these history stacks be useful outside of vim-movefast, they are stored in variables `g:movefast_buffer_history` (global) and `w:movefast_buffer_history` (window).
 
 ### Built-in movement configuration
 
