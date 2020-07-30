@@ -5,6 +5,16 @@ Use convenient, single-key presses to perform repetitive navigation - without re
 Enter movefast "mode", then use e.g. `h` and `l` to move - whether you are scrolling a buffer, navigating the buffer list, browsing a diff, stepping through quickfix entries or anything else that involves repetitive commands.
 The plugin contains some built-in movements but is entirely extensible - build the movefast movements you need!
 
+Examples (using the [built-in movements](#built-in-movements) below):
+
+**Scrolling**: Instead of <kbd>Ctrl</kbd>+<kbd>d</kbd> <kbd>Ctrl</kbd>+<kbd>d</kbd> <kbd>Ctrl</kbd>+<kbd>u</kbd> <kbd>Ctrl</kbd>+<kbd>d</kbd>, use <kbd>Space</kbd><kbd>j</kbd><kbd>j</kbd><kbd>k</kbd><kbd>j</kbd>
+
+**Tabbing**: Instead of <kbd>g</kbd><kbd>t</kbd> <kbd>g</kbd><kbd>t</kbd> <kbd>g</kbd><kbd>T</kbd> <kbd>g</kbd><kbd>t</kbd>, use <kbd>Space</kbd><kbd>t</kbd><kbd>l</kbd><kbd>l</kbd><kbd>h</kbd><kbd>l</kbd>
+
+**Buffering**: To navigate buffer history for this window, use <kbd>Space</kbd><kbd>b</kbd><kbd>l</kbd><kbd>l</kbd><kbd>h</kbd><kbd>l</kbd>
+
+Each of these demonstrates a mapping to enter movefast-mode and perform the first movement (<kbd>Space</kbd><kbd>j</kbd>, <kbd>Space</kbd><kbd>t</kbd><kbd>l</kbd>, <kbd>Space</kbd><kbd>b</kbd><kbd>l</kbd>), then repeated movements using <kbd>j</kbd>/<kbd>k</kbd> or <kbd>h</kbd>/<kbd>l</kbd>.
+
 ## Contents
 
 - [Anatomy of a movement](#anatomy-of-a-movement)
