@@ -39,7 +39,7 @@ nnoremap <silent> hl :call movefast#Init('l', { 'next': 'ChangeArg' })<CR>
 nnoremap <silent> lh :call movefast#Init('h', { 'next': 'ChangeArg' })<CR>
 ```
 
-As their are no other options specified in the dictionary sent to `movefast#Next()`, the default `h`/`l` directions are used in this movement.
+As there are no other options specified in the dictionary sent to `movefast#Init()`, the default `h`/`l` directions are used in this movement.
 The callback then performs the actual navigation, it could look like this:
 
 ```vim
@@ -55,7 +55,7 @@ endfunction
 
 With these mappings and the `ChangeArg()` callback function, `hl` or `lh` will enter a "change arg" mode and `h` and `l` will continue navigating forwards and backwards through the argument list.
 
-Any non-direction keypress completes the the movement.
+Any cursor movement other than a "direction" (`h`/`l`) completes the the movement.
 
 ## Movement options
 
@@ -70,6 +70,56 @@ Available options are:
 | `oninit`     | A funcref or expression to evaluate before initialising a movement                        | `'let save_cursor = getcurpos()'`            |
 | `onnext`     | A funcref or expression to evaluate after each movement `next`                            | `function('lightline#update')`               |
 | `oncomplete` | A funcref or expression to evaluate after leaving movefast mode                           | `'call setpos('.', save_cursor)'`            |
+| `cancel`     | An array of keys to use to complete the movement ([advanced](#Advanced-options))          | `['h', 'l']`                                 |
+| `buffer`     | Flag indicating that this movement does not change buffer, allowing buffer-local mappings ([advanced](#Advanced-options)) | `1`          |
+| `getchar`    | Flag forcing movefast to use [getchar()](http://vimhelp.appspot.com/eval.txt.html#getchar%28%29) to listen for movements, rather than mappings ([advanced](#Advanced-options)) | `1`               |
+
+### Advanced options
+
+There are 2 techniques used for reacting to movement directions: mappings and [getchar()](http://vimhelp.appspot.com/eval.txt.html#getchar%28%29).
+They each have pros and cons.
+
+By default, movements use mappings. To use `getchar` instead, use the `getchar: 1` option.
+
+#### getchar()
+
+After performing each movement, a [getchar()](http://vimhelp.appspot.com/eval.txt.html#getchar%28%29) call is made to listen for the next input key.
+A direction key triggers another navigation, and any other key key completes the movement.
+
+Pros:
+
+- Any non-direction key can be used to complete a movement.
+
+Cons:
+
+- `getchar()` captures a keypress, meaning that it can't be used for anything else, e.g. a multi-key command or mapping. This means that a non-direction keypress is required to complete a movement **before** any multi-key commands can be input, which can be confusing. For example, after entering a movement, you may try to scroll to the top of the buffer with `gg` but the first `g` will be used to complete the motion, so Vim is left in operator-pending mode, waiting for the next key.
+-  Vim remains in command-line mode, and the cursor is hidden, making it hard to keep track of where your last navigation has left you.
+
+#### Mappings
+
+Temporary mappings are created for the 2 directions, and removed again on movement completion.
+If conflicting mappings exist, we fall back to "getchar" mode.
+
+Detection of movement completion is more difficult with mappings, as we can't simply "listen" for any non-direction key, as we can with `getchar()`.
+Instead, [CursorMoved](http://vimhelp.appspot.com/autocmd.txt.html#CursorMoved) and [InsertEnter](http://vimhelp.appspot.com/autocmd.txt.html#InsertEnter) autocmds are used to detect movement completion.
+Additionally, a movement may be configured with extra "cancellation" mapping keys, using the `cancel: 1` option.
+A use-case may be to allow `h` to always complete vertical scrolling, even when the cursor is on the first column (meaning `h` does not move the cursor and trigger a `CursorMoved` event).
+
+Pros:
+
+- A multi-key command or mapping can be used at any time.
+- Vim remains in normal mode.
+
+Cons:
+
+- Complete existing mappings (e.g. `nnoremap l ll`) prevent a movement mapping from being made (fall back to "getchar mode").
+- Partial existing mappings (e.g. `nnoremap ll 5l`) result in slow movements, as vim waits for `'timeoutlen'` before performing the navigation, in case another key of the existing mapping is entered.
+- Cannot always determine when a movement is complete.
+
+The first 2 cons may be resolved by using buffer-local mappings, as buffer mappings will override global mappings and can use the [<buffer>](http://vimhelp.appspot.com/map.txt.html#%3Amap-%3Cbuffer%3E) [<nowait>](http://vimhelp.appspot.com/map.txt.html#%3Amap-%3Cnowait%3E) modifiers.
+However, buffer-local mappings will of course only work for movements which do not change buffer!
+Buffer/tab/arg navigation movements cannot use buffer-local mappings, so of the 3 built-in movements, only scrolling uses buffer-local mappings.
+Use the `buffer: 1` option to make a movement use buffer-local mappings.
 
 ## Built-in movements
 

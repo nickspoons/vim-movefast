@@ -15,6 +15,7 @@ endfunction
 function! s:FastTabInit(directionIndex) abort
   let s:options = {
   \ 'directions': ['h', 'l'],
+  \ 'cancel': ['j', 'k'],
   \ 'title': 'FastTabbing…',
   \ 'next': function('s:FastTab')
   \}

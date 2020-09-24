@@ -12,7 +12,7 @@ nnoremap <silent> <Plug>(movefast_scroll_right) :call movefast#movement#scroll#R
 nnoremap <silent> <Plug>(movefast_tab_prev) :call movefast#movement#tab#Prev()<CR>
 nnoremap <silent> <Plug>(movefast_tab_next) :call movefast#movement#tab#Next()<CR>
 
-augroup MoveFast
+augroup MoveFastBufferHistory
   autocmd!
   autocmd BufWinEnter * call movefast#movement#buffer#AddToHistory()
 augroup END

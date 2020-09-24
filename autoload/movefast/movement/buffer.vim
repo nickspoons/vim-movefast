@@ -59,6 +59,7 @@ function! s:FastBufferInit(global) abort
   endif
   let s:options = {
   \ 'directions': ['h', 'l'],
+  \ 'cancel': ['j', 'k'],
   \ 'title': (a:global ? 'Global ' : '') . 'FastBuffering…',
   \ 'next': function('s:FastBuffer', [scope])
   \}

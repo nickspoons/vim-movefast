@@ -24,6 +24,8 @@ endfunction
 function! s:FastScrollInit(directionIndex) abort
   let s:options = {
   \ 'directions': ['j', 'k'],
+  \ 'cancel': ['h', 'l'],
+  \ 'buffer': 1,
   \ 'title': 'FastScrolling…',
   \ 'next': function('s:FastScroll')
   \}
@@ -35,6 +37,8 @@ endfunction
 function! s:FastScrollInitHorizontal(directionIndex) abort
   let s:options = {
   \ 'directions': ['h', 'l'],
+  \ 'cancel': ['j', 'k'],
+  \ 'buffer': 1,
   \ 'title': 'FastScrolling…',
   \ 'next': function('s:FastScrollHorizontal')
   \}
