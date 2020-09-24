@@ -2,10 +2,10 @@ let s:save_cpo = &cpoptions
 set cpoptions&vim
 
 function! movefast#Init(direction, options) abort
+  call s:Unmap()
   let s:options = a:options
   let s:options.buffer = get(s:options, 'buffer', 0)
   let s:options.getchar = get(s:options, 'getchar', 0)
-  call s:Unmap()
   if !s:options.getchar
     call s:Map()
   endif
