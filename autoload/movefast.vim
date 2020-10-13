@@ -56,6 +56,9 @@ function! s:Map() abort
   augroup MoveFast
     autocmd!
     autocmd CursorMoved,InsertEnter * call <SID>Complete()
+    if s:options.buffer
+      autocmd BufLeave,BufWinLeave * call <SID>Complete()
+    endif
   augroup END
 endfunction
 
