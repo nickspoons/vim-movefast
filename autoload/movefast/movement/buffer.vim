@@ -48,7 +48,9 @@ function! s:FastBufferInit(global) abort
   " Filter movefast_buffer_history in both scopes - do not use copy() here
   for scope in [g:, w:]
     call filter(get(scope, 'movefast_buffer_history', []),
-    \ 'bufexists(v:val) && index(bts, getbufvar(v:val, "&buftype")) >= 0')
+    \ {_,b -> bufexists(b) && index(bts, getbufvar(b, '&buftype')) >= 0})
+    call filter(get(scope, 'movefast_buffer_history', []),
+    \ {_,b -> fnamemodify(bufname(b), ':p') !~# '^fugitive:'})
   endfor
   let scope = a:global ? g: : w:
   if len(get(scope, 'movefast_buffer_history', [])) < 2 | return | endif
